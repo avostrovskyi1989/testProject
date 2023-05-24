@@ -1,5 +1,7 @@
 package com.test;
 
+import com.test.counter.CounterService;
+import com.test.counter.CounterServiceImpl;
 import com.test.fileprocessor.FileProcessorFacade;
 import com.test.fileprocessor.FileProcessorService;
 import com.test.fileprocessor.PdfFileProcessor;
@@ -17,24 +19,28 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        final String directoryForSearch = "test";
+        final String directoryForSearch = "supportedDirectory1";
         final String wordToSearch = "test";
 
         FileCounterBusinessService businessService = dependencyInjection();
         // Business service call
-        businessService.calculate(directoryForSearch, wordToSearch, FileType.PDF);
+        long result = businessService.calculate(directoryForSearch, wordToSearch);
+        // Result
+        System.out.println(result);
     }
 
     private static FileCounterBusinessService dependencyInjection() {
         RemoteFilesystemRepository repository = new RemoteFilesystemRepositoryImpl(Map.of(
                 "supportedDirectory1", new LocalFileSystem("supportedDirectory1"),
                 "supportedDirectory2", new LocalFileSystem("supportedDirectory2")
-        ));
+        ), FileType.searchable());
         FileProcessorService processorService = new FileProcessorFacade(Map.of(
                 FileType.TXT, new TxtFileProcessor(),
                 FileType.PDF, new PdfFileProcessor(),
                 FileType.WORD, new WordFileProcessor()
         ));
-        return new FileCounterBusinessServiceImpl(repository, processorService);
+        CounterService counterService = new CounterServiceImpl();
+        // Injection
+        return new FileCounterBusinessServiceImpl(repository, processorService, counterService);
     }
 }

@@ -9,8 +9,7 @@ public interface FileCounterBusinessService {
      *
      * @param directory Directory name
      * @param word      Word to count
-     * @param fileType  File type to search
      * @return Count of word in latest file
      */
-    long calculate(String directory, String word, FileType fileType);
+    long calculate(String directory, String word);
 }
